@@ -8,21 +8,28 @@ const MODEL_NAME = process.env.NEMOTRON_MODEL || 'nvidia/nemotron-nano-12b-v2-vl
  * Generate lifecycle plan using Nemotron nano model
  */
 async function generateLifecycle(req, res, next) {
+  console.log('📝 Generate Lifecycle - Request received');
+  console.log('Request body:', req.body);
+  
   try {
     const { name, description, targetUsers, timeline } = req.body;
 
     // Validation
     if (!name || !description) {
+      console.log('❌ Validation error: Missing name or description');
       return res.status(400).json({
         error: 'Product name and description are required',
       });
     }
 
     if (!NEMOTRON_API_KEY) {
+      console.log('❌ API Key not configured!');
       return res.status(500).json({
         error: 'NEMOTRON_API_KEY is not configured',
       });
     }
+    
+    console.log('✅ Validation passed, calling Nemotron API...');
 
     // Build prompt for lifecycle generation
     const prompt = `You are a product management expert. Generate a comprehensive product lifecycle plan for the following product:
@@ -95,6 +102,8 @@ Respond ONLY with valid JSON, no additional text.`;
       ? NEMOTRON_API_URL
       : `${NEMOTRON_API_URL}/chat/completions`;
     
+    console.log('🚀 Sending request to Nemotron API:', apiUrl);
+    
     const response = await axios.post(
       apiUrl,
       payload,
@@ -107,12 +116,17 @@ Respond ONLY with valid JSON, no additional text.`;
       }
     );
 
+    console.log('✅ Received response from Nemotron API, status:', response.status);
+
     // Extract content from response
     const content = response.data.choices[0]?.message?.content;
 
     if (!content) {
+      console.log('❌ No content in API response');
       throw new Error('No content received from Nemotron API');
     }
+
+    console.log('📄 Response content received, parsing JSON...');
 
     // Parse JSON response
     let lifecycleData;
@@ -124,8 +138,9 @@ Respond ONLY with valid JSON, no additional text.`;
       } else {
         lifecycleData = JSON.parse(content);
       }
+      console.log('✅ JSON parsed successfully');
     } catch (parseError) {
-      console.error('Failed to parse JSON:', content);
+      console.error('❌ Failed to parse JSON:', content);
       throw new Error('Invalid JSON response from Nemotron API');
     }
 
@@ -136,12 +151,14 @@ Respond ONLY with valid JSON, no additional text.`;
       !lifecycleData.risks ||
       !lifecycleData.kpis
     ) {
+      console.log('❌ Invalid response structure');
       throw new Error('Invalid response structure from API');
     }
 
+    console.log('✅ Lifecycle data validated, sending response');
     res.json(lifecycleData);
   } catch (error) {
-    console.error('Error generating lifecycle:', error);
+    console.error('❌ Error generating lifecycle:', error);
 
     if (error.response) {
       // API error response

@@ -8,21 +8,27 @@ const MODEL_NAME = process.env.NEMOTRON_MODEL || 'nvidia/nemotron-nano-12b-v2-vl
  * Generate status report using Nemotron nano model
  */
 async function generateStatus(req, res, next) {
+  console.log('📊 Generate Status - Request received');
+  
   try {
     const { lifecycleData, productInput } = req.body;
 
     // Validation
     if (!lifecycleData || !productInput) {
+      console.log('❌ Validation error: Missing data');
       return res.status(400).json({
         error: 'lifecycleData and productInput are required',
       });
     }
 
     if (!NEMOTRON_API_KEY) {
+      console.log('❌ API Key not configured!');
       return res.status(500).json({
         error: 'NEMOTRON_API_KEY is not configured',
       });
     }
+    
+    console.log('✅ Calling Nemotron API for status report...');
 
     // Calculate progress
     const doneTasks = lifecycleData.tasks.filter((t) => t.status === 'Done').length;
