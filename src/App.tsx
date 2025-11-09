@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { ApiStatusBanner } from './components/ApiStatusBanner';
 import { InputCard } from './components/InputCard';
@@ -7,10 +7,19 @@ import { ExecutionPlanCard } from './components/ExecutionPlanCard';
 import { RisksMetricsCard } from './components/RisksMetricsCard';
 import { StatusSummaryCard } from './components/StatusSummaryCard';
 import { TeamMemberPicker } from './components/TeamMemberPicker';
+import { AuthPage } from './components/AuthPage';
 import { Toaster } from './components/ui/sonner';
 import { api } from './lib/api-client';
 import { ExpandableSection } from './components/ExpandableSection';
 import { TeamMember } from './types/collaboration';
+import { useAuth } from './contexts/AuthContext';
+import { logOut } from './services/authService';
+import {
+  createProject,
+  getUserProjects,
+  updateProject,
+} from './services/databaseService';
+import { toast } from 'sonner';
 
 export interface ProductInput {
   name: string;
@@ -50,22 +59,14 @@ export interface ReportData {
 }
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, loading: authLoading } = useAuth();
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [productInput, setProductInput] = useState<ProductInput>({
     name: '',
     description: '',
     targetUsers: '',
     timeline: '6 months',
   });
-
-  const handleLogin = (email: string, password: string) => {
-    // Simple login - just set logged in state
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
 
   const [lifecycleData, setLifecycleData] = useState<LifecycleData | null>(null);
   const [reportData, setReportData] = useState<ReportData | null>(null);
@@ -80,6 +81,116 @@ export default function App() {
   // Collaboration state
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [taskAssignments, setTaskAssignments] = useState<Record<string, string[]>>({});
+
+  // Load existing project or create new one
+  useEffect(() => {
+    if (!user) {
+      setCurrentProjectId(null);
+      setLifecycleData(null);
+      setTeamMembers([]);
+      setTaskAssignments({});
+      setReportData(null);
+      return;
+    }
+
+    // Load user's latest project
+    const loadProject = async () => {
+      try {
+        const projects = await getUserProjects(user.uid);
+        if (projects.length > 0) {
+          const latestProject = projects[0];
+          setCurrentProjectId(latestProject.id);
+          setProductInput({
+            name: latestProject.name,
+            description: latestProject.description,
+            targetUsers: latestProject.targetUsers,
+            timeline: latestProject.timeline,
+          });
+          setLifecycleData({
+            phases: latestProject.phases,
+            tasks: latestProject.tasks,
+            risks: latestProject.risks,
+            kpis: latestProject.kpis,
+          });
+          setTeamMembers(latestProject.teamMembers);
+          setTaskAssignments(latestProject.taskAssignments);
+          setReportData(latestProject.reportData);
+          toast.success('Project loaded');
+        }
+      } catch (error) {
+        console.error('Error loading project:', error);
+        toast.error('Failed to load project');
+      }
+    };
+
+    loadProject();
+  }, [user]);
+
+  // Auto-save project changes
+  const saveProject = async () => {
+    if (!user || !lifecycleData) return;
+
+    try {
+      if (currentProjectId) {
+        // Update existing project
+        await updateProject(currentProjectId, {
+          name: productInput.name,
+          description: productInput.description,
+          targetUsers: productInput.targetUsers,
+          timeline: productInput.timeline,
+          phases: lifecycleData.phases,
+          tasks: lifecycleData.tasks,
+          risks: lifecycleData.risks,
+          kpis: lifecycleData.kpis,
+          teamMembers,
+          taskAssignments,
+          reportData,
+        });
+      } else {
+        // Create new project
+        const projectId = await createProject(user.uid, {
+          name: productInput.name,
+          description: productInput.description,
+          targetUsers: productInput.targetUsers,
+          timeline: productInput.timeline,
+          phases: lifecycleData.phases,
+          tasks: lifecycleData.tasks,
+          risks: lifecycleData.risks,
+          kpis: lifecycleData.kpis,
+          teamMembers,
+          taskAssignments,
+          reportData,
+        });
+        setCurrentProjectId(projectId);
+        toast.success('Project saved');
+      }
+    } catch (error) {
+      console.error('Error saving project:', error);
+      toast.error('Failed to save project');
+    }
+  };
+
+  // Auto-save when data changes
+  useEffect(() => {
+    if (lifecycleData && user) {
+      const timeoutId = setTimeout(() => {
+        saveProject();
+      }, 2000); // Debounce save by 2 seconds
+
+      return () => clearTimeout(timeoutId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lifecycleData, teamMembers, taskAssignments, reportData, user]);
+
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      toast.success('Logged out successfully');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast.error('Failed to log out');
+    }
+  };
 
   // Team member management
   const handleAddMember = (member: Omit<TeamMember, 'id'>) => {
@@ -218,6 +329,32 @@ export default function App() {
 
   const progress = calculateProgress();
 
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--lc-bg)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg animate-pulse">
+            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <p className="text-[var(--lc-muted)]">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show auth page if not logged in
+  if (!user) {
+    return (
+      <>
+        <AuthPage onAuthSuccess={() => {}} />
+        <Toaster position="bottom-right" />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--lc-bg)] text-[var(--lc-text)] flex flex-col relative overflow-hidden">
       {/* Animated background elements */}
@@ -227,10 +364,9 @@ export default function App() {
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-purple-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       
-      <Navbar onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={isLoggedIn} />
+      <Navbar onLogin={() => {}} onLogout={handleLogout} isLoggedIn={!!user} />
       
-      {isLoggedIn && (
-        <main className="px-8 py-6 pt-24 overflow-y-auto" style={{ paddingTop: '96px' }}>
+      <main className="px-8 py-6 pt-24 overflow-y-auto" style={{ paddingTop: '96px' }}>
           <div className="max-w-6xl mx-auto space-y-6">
               <ApiStatusBanner />
               
@@ -288,8 +424,7 @@ export default function App() {
                 </div>
               )}
             </div>
-          </main>
-      )}
+        </main>
       
       <Toaster position="bottom-right" />
     </div>
