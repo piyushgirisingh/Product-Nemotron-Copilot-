@@ -1,35 +1,88 @@
-import { Sparkles } from 'lucide-react';
-import { Badge } from './ui/badge';
+import { useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
+import ShinyText from './ShinyText';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Card } from './ui/card';
 
-export function Navbar() {
+interface NavbarProps {
+  onLogin: (email: string, password: string) => void;
+  onLogout: () => void;
+  isLoggedIn: boolean;
+}
+
+export function Navbar({ onLogin, onLogout, isLoggedIn }: NavbarProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onLogin(email, password);
+  };
+
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-neutral-200/60 px-6 h-16 flex items-center justify-between shadow-sm">
-      <div className="flex items-center gap-3 group/logo">
-        <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/30 group-hover/logo:scale-110 group-hover/logo:rotate-6 transition-all duration-300">
-          <Sparkles className="w-5 h-5 text-white group-hover/logo:animate-pulse" />
+    <header className={`w-full border-b border-[var(--lc-border)] bg-[var(--lc-bg)] relative ${isLoggedIn ? 'py-4' : 'flex flex-col items-center justify-center py-8'}`}>
+      {isLoggedIn && (
+        <div className="flex items-center h-full px-8">
+          <Button
+            variant="ghost"
+            onClick={onLogout}
+            className="text-[var(--lc-text)] hover:bg-[var(--lc-surface)]"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back
+          </Button>
         </div>
-        <div className="flex flex-col">
-          <span className="font-bold text-neutral-900 text-base">Lifecycle Copilot</span>
-          <span className="text-xs text-neutral-500">Product Planning AI</span>
+      )}
+      {!isLoggedIn && (
+        <>
+          <ShinyText
+            text="Nemora"
+            disabled={false}
+            speed={3}
+            className="text-5xl sm:text-6xl md:text-7xl font-semibold tracking-[0.18em]"
+          />
+          <p className="text-2xl sm:text-3xl md:text-4xl mt-4 text-[var(--lc-text)] mx-auto text-center" style={{ fontFamily: "'Roboto', sans-serif", fontWeight: 400, fontSize: 'clamp(1.5rem, 4vw, 2.75rem)', maxWidth: '90%', textAlign: 'center' }}>
+            Welcome to Nemora, your new nemotron powered product management tool!
+          </p>
+        </>
+      )}
+      {!isLoggedIn && (
+        <div className="mt-12 w-full max-w-md">
+          <div className="rounded-lg border border-[var(--lc-border)] bg-[var(--lc-surface-soft)] shadow-lg p-8">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              <h3 className="text-2xl font-bold text-[var(--lc-text)] text-center mb-2">Login</h3>
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-[var(--lc-text)]">Email address</label>
+                  <Input
+                    type="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-[var(--lc-surface)] border-[var(--lc-border)] text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:border-[var(--lc-accent)] h-11"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-[var(--lc-text)]">Password</label>
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-[var(--lc-surface)] border-[var(--lc-border)] text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:border-[var(--lc-accent)] h-11"
+                    required
+                  />
+                </div>
+              </div>
+              <Button type="submit" variant="primary" className="w-full h-11 mt-2">
+                Login
+              </Button>
+            </form>
+          </div>
         </div>
-      </div>
-      
-      <div className="flex items-center gap-2.5 px-4 py-1.5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-full border border-green-200/60 hover:border-green-300 transition-all hover:scale-105 group/status">
-        <div className="relative">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <div className="absolute inset-0 w-2 h-2 rounded-full bg-green-500 animate-ping"></div>
-        </div>
-        <span className="text-neutral-700 text-xs font-medium">Powered by Nemotron</span>
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <Badge variant="outline" className="text-neutral-600 border-neutral-300 bg-white/50 text-xs px-3 py-1 hover:bg-neutral-50 hover:scale-105 transition-all cursor-pointer">
-          NVIDIA
-        </Badge>
-        <Badge variant="outline" className="text-neutral-600 border-neutral-300 bg-white/50 text-xs px-3 py-1 hover:bg-neutral-50 hover:scale-105 transition-all cursor-pointer">
-          PNC
-        </Badge>
-      </div>
-    </nav>
+      )}
+    </header>
   );
 }

@@ -33,23 +33,19 @@ export function InputCard({
   const maxDescriptionLength = 500;
 
   return (
-    <Card className="p-6 bg-white/80 backdrop-blur-sm border border-neutral-200/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl group relative overflow-hidden">
-      {/* Gradient accent on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-      
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-sm">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <h2 className="text-neutral-900 font-semibold">Describe your product</h2>
+    <Card className="space-y-5">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-sm">
+            <Sparkles className="w-4 h-4 text-white" />
           </div>
+          <h2 className="text-[var(--lc-text)] font-semibold">Describe your product</h2>
         </div>
-      
+      </div>
+    
       <div className="space-y-5">
         <div className="space-y-2 group/input">
-          <Label htmlFor="product-name" className="text-sm text-neutral-700 group-focus-within/input:text-blue-600 transition-colors">
+          <Label htmlFor="product-name" className="text-sm text-[var(--lc-muted)]">
             Product Name <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -58,19 +54,19 @@ export function InputCard({
             onChange={(e) => setProductInput({ ...productInput, name: e.target.value })}
             placeholder="e.g., Smart Health Tracker"
             disabled={isGenerating}
-            className="border-neutral-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200 hover:border-neutral-300"
+            className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)]"
           />
         </div>
         
         <div className="space-y-2 group/input">
           <div className="flex items-center justify-between">
-            <Label htmlFor="description" className="text-sm text-neutral-700 group-focus-within/input:text-blue-600 transition-colors">
+            <Label htmlFor="description" className="text-sm text-[var(--lc-muted)]">
               Short Description <span className="text-red-500">*</span>
             </Label>
             <span className={`text-xs transition-colors ${
               descriptionLength > maxDescriptionLength ? 'text-red-500' : 
               descriptionLength > maxDescriptionLength * 0.8 ? 'text-amber-500' : 
-              'text-neutral-400'
+              'text-[var(--lc-muted)]'
             }`}>
               {descriptionLength}/{maxDescriptionLength}
             </span>
@@ -86,13 +82,13 @@ export function InputCard({
             placeholder="Describe what your product does, its key features, and value proposition..."
             rows={3}
             disabled={isGenerating}
-            className="border-neutral-200 focus:border-blue-500 focus:ring-blue-500/20 resize-none transition-all duration-200 hover:border-neutral-300"
+            className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)] resize-none"
           />
         </div>
         
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2 group/input">
-            <Label htmlFor="target-users" className="text-sm text-neutral-700 group-focus-within/input:text-blue-600 transition-colors">
+            <Label htmlFor="target-users" className="text-sm text-[var(--lc-muted)]">
               Target Users
             </Label>
             <Input
@@ -101,12 +97,12 @@ export function InputCard({
               onChange={(e) => setProductInput({ ...productInput, targetUsers: e.target.value })}
               placeholder="e.g., Healthcare professionals"
               disabled={isGenerating}
-              className="border-neutral-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200 hover:border-neutral-300"
+              className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)]"
             />
           </div>
           
           <div className="space-y-2 group/input">
-            <Label htmlFor="timeline" className="text-sm text-neutral-700 group-focus-within/input:text-blue-600 transition-colors">
+            <Label htmlFor="timeline" className="text-sm text-[var(--lc-muted)]">
               Timeline
             </Label>
             <Select
@@ -114,7 +110,7 @@ export function InputCard({
               onValueChange={(value) => setProductInput({ ...productInput, timeline: value })}
               disabled={isGenerating}
             >
-              <SelectTrigger id="timeline" className="border-neutral-200 hover:border-neutral-300 transition-colors">
+              <SelectTrigger id="timeline" className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -127,23 +123,23 @@ export function InputCard({
         </div>
         
         {error && (
-          <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <Alert variant="destructive" className="border-red-800 bg-red-900/20">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-sm">{error}</AlertDescription>
+            <AlertDescription className="text-sm text-[var(--lc-text)]">{error}</AlertDescription>
           </Alert>
         )}
         
         <div className="pt-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-[var(--lc-muted)]">
               AI-powered lifecycle planning with Nemotron
             </p>
           </div>
           <Button
             onClick={onGenerate}
             disabled={isGenerating}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 px-6 group/btn"
+            variant="primary"
           >
             {isGenerating ? (
               <>
@@ -159,7 +155,8 @@ export function InputCard({
           </Button>
         </div>
       </div>
-      </div>
     </Card>
   );
 }
+
+export default InputCard;

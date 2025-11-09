@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { Navbar } from './components/Navbar';
-import { Sidebar } from './components/Sidebar';
 import { ApiStatusBanner } from './components/ApiStatusBanner';
 import { InputCard } from './components/InputCard';
 import { LifecycleOverviewCard } from './components/LifecycleOverviewCard';
@@ -10,6 +9,7 @@ import { RisksMetricsCard } from './components/RisksMetricsCard';
 import { StatusSummaryCard } from './components/StatusSummaryCard';
 import { Toaster } from './components/ui/sonner';
 import { api } from './lib/api-client';
+import { ExpandableSection } from './components/ExpandableSection';
 
 export interface ProductInput {
   name: string;
@@ -49,12 +49,22 @@ export interface ReportData {
 }
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [productInput, setProductInput] = useState<ProductInput>({
     name: '',
     description: '',
     targetUsers: '',
     timeline: '6',
   });
+
+  const handleLogin = (email: string, password: string) => {
+    // Simple login - just set logged in state
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
 
   const [lifecycleData, setLifecycleData] = useState<LifecycleData | null>(null);
   const [reportData, setReportData] = useState<ReportData | null>(null);
@@ -161,7 +171,7 @@ export default function App() {
   const progress = calculateProgress();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-blue-50/30 to-indigo-50/20 flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--lc-bg)] text-[var(--lc-text)] flex flex-col relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
@@ -169,72 +179,62 @@ export default function App() {
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-purple-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       
-      <Navbar />
+      <Navbar onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={isLoggedIn} />
       
-      <div className="flex flex-1 relative z-10">
-        <Sidebar />
-        
-        <main className="flex-1 p-8 overflow-y-auto">
-          <div className="max-w-5xl mx-auto space-y-6">
-            <ApiStatusBanner />
-            
-            {/* Welcome Section */}
-            {!lifecycleData && (
-              <div className="text-center py-8 animate-fade-in">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/50 mb-4 animate-float">
-                  <Sparkles className="w-8 h-8 text-white" />
+      {isLoggedIn && (
+        <main className="px-8 py-6 pt-24 overflow-y-auto" style={{ paddingTop: '96px' }}>
+          <div className="max-w-6xl mx-auto space-y-6">
+              <ApiStatusBanner />
+              
+              <div className="animate-slide-up">
+                <InputCard
+                  productInput={productInput}
+                  setProductInput={setProductInput}
+                  onGenerate={handleGenerateLifecycle}
+                  isGenerating={isGeneratingPlan}
+                  error={planError}
+                />
+              </div>
+              
+              {lifecycleData && (
+                <div className="space-y-6 animate-fade-in">
+                  <ExpandableSection title="Lifecycle Overview" defaultOpen={true}>
+                    <LifecycleOverviewCard
+                      phases={lifecycleData.phases}
+                      progress={progress}
+                    />
+                  </ExpandableSection>
+                  
+                  <ExpandableSection title="Execution Plan" defaultOpen={false}>
+                    <ExecutionPlanCard
+                      tasks={lifecycleData.tasks}
+                      onUpdateTaskStatus={handleUpdateTaskStatus}
+                    />
+                  </ExpandableSection>
+                  
+                  <ExpandableSection title="Risks & Metrics" defaultOpen={false}>
+                    <RisksMetricsCard
+                      risks={lifecycleData.risks}
+                      kpis={lifecycleData.kpis}
+                    />
+                  </ExpandableSection>
+                  
+                  <ExpandableSection title="AI Status & Launch Summary" defaultOpen={false}>
+                    <StatusSummaryCard
+                      reportData={reportData}
+                      onGenerateStatus={handleGenerateStatus}
+                      onSendToSlack={handleSendToSlack}
+                      isGeneratingStatus={isGeneratingStatus}
+                      isSendingSlack={isSendingSlack}
+                      statusError={statusError}
+                      hasLifecycleData={!!lifecycleData}
+                    />
+                  </ExpandableSection>
                 </div>
-                <h1 className="text-3xl font-bold text-neutral-900 mb-2 tracking-tight">
-                  Welcome to Lifecycle Copilot
-                </h1>
-                <p className="text-neutral-600 max-w-2xl mx-auto">
-                  AI-powered product lifecycle planning that transforms your ideas into actionable roadmaps.
-                  Get started by describing your product below.
-                </p>
-              </div>
-            )}
-            
-            <div className="animate-slide-up">
-              <InputCard
-                productInput={productInput}
-                setProductInput={setProductInput}
-                onGenerate={handleGenerateLifecycle}
-                isGenerating={isGeneratingPlan}
-                error={planError}
-              />
+              )}
             </div>
-            
-            {lifecycleData && (
-              <div className="space-y-6 animate-fade-in">
-                <LifecycleOverviewCard
-                  phases={lifecycleData.phases}
-                  progress={progress}
-                />
-                
-                <ExecutionPlanCard
-                  tasks={lifecycleData.tasks}
-                  onUpdateTaskStatus={handleUpdateTaskStatus}
-                />
-                
-                <RisksMetricsCard
-                  risks={lifecycleData.risks}
-                  kpis={lifecycleData.kpis}
-                />
-                
-                <StatusSummaryCard
-                  reportData={reportData}
-                  onGenerateStatus={handleGenerateStatus}
-                  onSendToSlack={handleSendToSlack}
-                  isGeneratingStatus={isGeneratingStatus}
-                  isSendingSlack={isSendingSlack}
-                  statusError={statusError}
-                  hasLifecycleData={!!lifecycleData}
-                />
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
+          </main>
+      )}
       
       <Toaster position="bottom-right" />
     </div>
