@@ -29,16 +29,33 @@ export function TeamMemberPicker({
     name: '',
     email: '',
     role: 'Product Manager' as TeamMember['role'],
-    department: 'Product' as TeamMember['department'],
   });
 
   const handleAddMember = () => {
     if (newMember.name && newMember.email) {
-      const colors = ['blue-500', 'purple-500', 'green-500', 'orange-500', 'pink-500', 'indigo-500'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
+      // Expanded color palette with more vibrant options
+      const colors = [
+        'blue-500',      // Blue
+        'purple-500',    // Purple
+        'green-500',     // Green
+        'orange-500',    // Orange
+        'pink-500',      // Pink
+        'indigo-500',    // Indigo
+        'red-500',       // Red
+        'teal-500',      // Teal
+        'yellow-500',    // Yellow
+        'cyan-500',      // Cyan
+        'fuchsia-500',   // Fuchsia
+        'emerald-500',   // Emerald
+      ];
+      
+      // Assign colors sequentially to ensure each member gets a unique color
+      const colorIndex = teamMembers.length % colors.length;
+      const color = colors[colorIndex];
       
       onAddMember({
         ...newMember,
+        department: 'Product', // Default department
         color,
       });
       
@@ -46,7 +63,6 @@ export function TeamMemberPicker({
         name: '',
         email: '',
         role: 'Product Manager',
-        department: 'Product',
       });
       setShowAddForm(false);
     }
@@ -102,40 +118,65 @@ export function TeamMemberPicker({
             onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
             className="bg-[var(--lc-surface-soft)] border-[var(--lc-border)] text-[var(--lc-text)] placeholder:text-[var(--lc-muted)]"
           />
-          <div className="grid grid-cols-2 gap-3">
-            <Select
-              value={newMember.role}
-              onValueChange={(value) => setNewMember({ ...newMember, role: value as TeamMember['role'] })}
+          <Select
+            value={newMember.role}
+            onValueChange={(value) => setNewMember({ ...newMember, role: value as TeamMember['role'] })}
+          >
+            <SelectTrigger className="bg-[var(--lc-surface-soft)] border-[var(--lc-border)] text-[var(--lc-text)]">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent 
+              className="bg-slate-900 border-2 border-slate-700 shadow-2xl rounded-lg p-1 min-w-[200px]" 
+              style={{ 
+                backgroundColor: '#0f172a',
+                zIndex: 9999,
+                position: 'relative'
+              }}
             >
-              <SelectTrigger className="bg-[var(--lc-surface-soft)] border-[var(--lc-border)] text-[var(--lc-text)]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-[var(--lc-surface)] border-[var(--lc-border)]">
-                <SelectItem value="Product Manager">Product Manager</SelectItem>
-                <SelectItem value="Engineering">Engineering</SelectItem>
-                <SelectItem value="Design">Design</SelectItem>
-                <SelectItem value="Marketing">Marketing</SelectItem>
-                <SelectItem value="Sales">Sales</SelectItem>
-                <SelectItem value="Executive">Executive</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={newMember.department}
-              onValueChange={(value) => setNewMember({ ...newMember, department: value as TeamMember['department'] })}
-            >
-              <SelectTrigger className="bg-[var(--lc-surface-soft)] border-[var(--lc-border)] text-[var(--lc-text)]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-[var(--lc-surface)] border-[var(--lc-border)]">
-                <SelectItem value="Product">Product</SelectItem>
-                <SelectItem value="Engineering">Engineering</SelectItem>
-                <SelectItem value="Design">Design</SelectItem>
-                <SelectItem value="Marketing">Marketing</SelectItem>
-                <SelectItem value="Sales">Sales</SelectItem>
-                <SelectItem value="Executive">Executive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <SelectItem 
+                value="Product Manager" 
+                className="text-white cursor-pointer rounded px-3 py-2 my-1 font-medium"
+                style={{ backgroundColor: '#0f172a' }}
+              >
+                Product Manager
+              </SelectItem>
+              <SelectItem 
+                value="Engineering" 
+                className="text-white cursor-pointer rounded px-3 py-2 my-1 font-medium"
+                style={{ backgroundColor: '#0f172a' }}
+              >
+                Engineering
+              </SelectItem>
+              <SelectItem 
+                value="Design" 
+                className="text-white cursor-pointer rounded px-3 py-2 my-1 font-medium"
+                style={{ backgroundColor: '#0f172a' }}
+              >
+                Design
+              </SelectItem>
+              <SelectItem 
+                value="Marketing" 
+                className="text-white cursor-pointer rounded px-3 py-2 my-1 font-medium"
+                style={{ backgroundColor: '#0f172a' }}
+              >
+                Marketing
+              </SelectItem>
+              <SelectItem 
+                value="Sales" 
+                className="text-white cursor-pointer rounded px-3 py-2 my-1 font-medium"
+                style={{ backgroundColor: '#0f172a' }}
+              >
+                Sales
+              </SelectItem>
+              <SelectItem 
+                value="Executive" 
+                className="text-white cursor-pointer rounded px-3 py-2 my-1 font-medium"
+                style={{ backgroundColor: '#0f172a' }}
+              >
+                Executive
+              </SelectItem>
+            </SelectContent>
+          </Select>
           <Button onClick={handleAddMember} className="w-full">
             <Plus className="w-4 h-4 mr-2" />
             Add Team Member

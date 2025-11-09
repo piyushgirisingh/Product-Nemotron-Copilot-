@@ -60,6 +60,21 @@ export function ActivityFeed({ activities, teamMembers }: ActivityFeedProps) {
     return member?.color || 'neutral-400';
   };
 
+  const getColorStyle = (color: string) => {
+    const colorMap: Record<string, string> = {
+      'blue-500': 'bg-blue-500',
+      'purple-500': 'bg-purple-500',
+      'green-500': 'bg-green-500',
+      'orange-500': 'bg-orange-500',
+      'pink-500': 'bg-pink-500',
+      'indigo-500': 'bg-indigo-500',
+      'red-500': 'bg-red-500',
+      'teal-500': 'bg-teal-500',
+      'neutral-400': 'bg-neutral-400',
+    };
+    return colorMap[color] || 'bg-blue-500';
+  };
+
   return (
     <Card className="p-6 bg-[var(--lc-surface)] border-[var(--lc-border)]">
       <div className="flex items-center gap-2 mb-4">
@@ -80,7 +95,7 @@ export function ActivityFeed({ activities, teamMembers }: ActivityFeedProps) {
               <div key={activity.id} className="flex gap-3 group">
                 <div className="flex-shrink-0">
                   <div
-                    className={`w-8 h-8 rounded-full bg-${getUserColor(activity.userId)} flex items-center justify-center text-white text-xs font-semibold`}
+                    className={`w-8 h-8 rounded-full ${getColorStyle(getUserColor(activity.userId))} flex items-center justify-center text-white text-xs font-semibold`}
                   >
                     {getInitials(getUserName(activity.userId))}
                   </div>

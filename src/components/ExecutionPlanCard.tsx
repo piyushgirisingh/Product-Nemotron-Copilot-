@@ -108,7 +108,7 @@ export function ExecutionPlanCard({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {teamMembers.length > 0 && onAssignTask && onUnassignTask ? (
+                    {teamMembers && teamMembers.length > 0 && onAssignTask && onUnassignTask ? (
                       <TaskAssignmentPicker
                         teamMembers={teamMembers}
                         assignedMemberIds={taskAssignments[task.id] || []}
@@ -116,7 +116,9 @@ export function ExecutionPlanCard({
                         onUnassign={(memberId) => onUnassignTask(task.id, memberId)}
                       />
                     ) : (
-                      <span className="text-xs text-[var(--lc-muted)]">—</span>
+                      <div className="text-xs text-[var(--lc-muted)]">
+                        {teamMembers.length === 0 ? 'Add team members first' : '—'}
+                      </div>
                     )}
                   </TableCell>
                   <TableCell>
