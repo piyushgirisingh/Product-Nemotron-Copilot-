@@ -7,9 +7,12 @@ import { LifecycleOverviewCard } from './components/LifecycleOverviewCard';
 import { ExecutionPlanCard } from './components/ExecutionPlanCard';
 import { RisksMetricsCard } from './components/RisksMetricsCard';
 import { StatusSummaryCard } from './components/StatusSummaryCard';
+import { TeamMemberPicker } from './components/TeamMemberPicker';
+import { ActivityFeed } from './components/ActivityFeed';
 import { Toaster } from './components/ui/sonner';
 import { api } from './lib/api-client';
 import { ExpandableSection } from './components/ExpandableSection';
+import { TeamMember, Activity } from './types/collaboration';
 
 export interface ProductInput {
   name: string;
@@ -75,6 +78,90 @@ export default function App() {
   
   const [planError, setPlanError] = useState<string | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
+
+  // Collaboration state
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [taskAssignments, setTaskAssignments] = useState<Record<string, string[]>>({});
+  const [activities, setActivities] = useState<Activity[]>([]);
+
+  // Team member management
+  const handleAddMember = (member: Omit<TeamMember, 'id'>) => {
+    const newMember: TeamMember = {
+      ...member,
+      id: `member-${Date.now()}`,
+    };
+    setTeamMembers([...teamMembers, newMember]);
+    
+    // Add activity
+    addActivity('task_created', newMember.id, `${member.name} joined the team`);
+  };
+
+  const handleRemoveMember = (memberId: string) => {
+    const member = teamMembers.find(m => m.id === memberId);
+    setTeamMembers(teamMembers.filter(m => m.id !== memberId));
+    
+    // Remove all assignments for this member
+    const updatedAssignments = { ...taskAssignments };
+    Object.keys(updatedAssignments).forEach(taskId => {
+      updatedAssignments[taskId] = updatedAssignments[taskId].filter(id => id !== memberId);
+    });
+    setTaskAssignments(updatedAssignments);
+
+    if (member) {
+      addActivity('task_updated', memberId, `${member.name} left the team`);
+    }
+  };
+
+  // Task assignment management
+  const handleAssignTask = (taskId: string, memberId: string) => {
+    const currentAssignments = taskAssignments[taskId] || [];
+    if (!currentAssignments.includes(memberId)) {
+      setTaskAssignments({
+        ...taskAssignments,
+        [taskId]: [...currentAssignments, memberId],
+      });
+
+      const member = teamMembers.find(m => m.id === memberId);
+      const task = lifecycleData?.tasks.find(t => t.id === taskId);
+      if (member && task) {
+        addActivity('task_assigned', memberId, `assigned "${task.task}" to ${member.name}`, taskId);
+      }
+    }
+  };
+
+  const handleUnassignTask = (taskId: string, memberId: string) => {
+    const currentAssignments = taskAssignments[taskId] || [];
+    setTaskAssignments({
+      ...taskAssignments,
+      [taskId]: currentAssignments.filter(id => id !== memberId),
+    });
+
+    const member = teamMembers.find(m => m.id === memberId);
+    const task = lifecycleData?.tasks.find(t => t.id === taskId);
+    if (member && task) {
+      addActivity('task_updated', memberId, `unassigned "${task.task}" from ${member.name}`, taskId);
+    }
+  };
+
+  // Activity management
+  const addActivity = (
+    type: Activity['type'],
+    userId: string,
+    content: string,
+    taskId?: string,
+    metadata?: Record<string, any>
+  ) => {
+    const newActivity: Activity = {
+      id: `activity-${Date.now()}`,
+      type,
+      userId,
+      content,
+      timestamp: new Date(),
+      taskId,
+      metadata,
+    };
+    setActivities([newActivity, ...activities].slice(0, 50)); // Keep last 50 activities
+  };
 
   const handleGenerateLifecycle = async () => {
     // Validation
@@ -207,10 +294,31 @@ export default function App() {
                     progress={progress}
                   />
                   
-                  <ExecutionPlanCard
-                    tasks={lifecycleData.tasks}
-                    onUpdateTaskStatus={handleUpdateTaskStatus}
-                  />
+                  <ExpandableSection title="Team & Stakeholders" defaultOpen={true}>
+                    <TeamMemberPicker
+                      teamMembers={teamMembers}
+                      onAddMember={handleAddMember}
+                      onRemoveMember={handleRemoveMember}
+                    />
+                  </ExpandableSection>
+
+                  <ExpandableSection title="Execution Plan" defaultOpen={true}>
+                    <ExecutionPlanCard
+                      tasks={lifecycleData.tasks}
+                      teamMembers={teamMembers}
+                      taskAssignments={taskAssignments}
+                      onUpdateTaskStatus={handleUpdateTaskStatus}
+                      onAssignTask={handleAssignTask}
+                      onUnassignTask={handleUnassignTask}
+                    />
+                  </ExpandableSection>
+
+                  <ExpandableSection title="Activity Feed" defaultOpen={true}>
+                    <ActivityFeed
+                      activities={activities}
+                      teamMembers={teamMembers}
+                    />
+                  </ExpandableSection>
                   
                   <RisksMetricsCard
                     risks={lifecycleData.risks}

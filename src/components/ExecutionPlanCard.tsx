@@ -16,13 +16,26 @@ import {
   SelectValue,
 } from './ui/select';
 import { Task } from '../App';
+import { TeamMember } from '../types/collaboration';
+import { TaskAssignmentPicker } from './TaskAssignmentPicker';
 
 interface ExecutionPlanCardProps {
   tasks: Task[];
+  teamMembers?: TeamMember[];
+  taskAssignments?: Record<string, string[]>; // taskId -> array of memberIds
   onUpdateTaskStatus: (taskId: string, status: Task['status']) => void;
+  onAssignTask?: (taskId: string, memberId: string) => void;
+  onUnassignTask?: (taskId: string, memberId: string) => void;
 }
 
-export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCardProps) {
+export function ExecutionPlanCard({ 
+  tasks, 
+  teamMembers = [], 
+  taskAssignments = {}, 
+  onUpdateTaskStatus,
+  onAssignTask,
+  onUnassignTask 
+}: ExecutionPlanCardProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'P0':
@@ -65,10 +78,11 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
         <Table>
           <TableHeader>
             <TableRow className="bg-[var(--lc-surface-soft)] border-b border-[var(--lc-border)]">
-              <TableHead className="w-32 text-sm font-semibold text-[var(--lc-muted)]">Phase</TableHead>
-              <TableHead className="text-sm font-semibold text-[var(--lc-muted)]">Task</TableHead>
-              <TableHead className="w-24 text-sm font-semibold text-[var(--lc-muted)]">Priority</TableHead>
-              <TableHead className="w-40 text-sm font-semibold text-[var(--lc-muted)]">Status</TableHead>
+              <TableHead className="w-32 text-xs font-semibold text-[var(--lc-muted)]">Phase</TableHead>
+              <TableHead className="text-xs font-semibold text-[var(--lc-muted)]">Task</TableHead>
+              <TableHead className="w-24 text-xs font-semibold text-[var(--lc-muted)]">Priority</TableHead>
+              <TableHead className="w-32 text-xs font-semibold text-[var(--lc-muted)]">Assigned To</TableHead>
+              <TableHead className="w-40 text-xs font-semibold text-[var(--lc-muted)]">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -92,6 +106,18 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
                     >
                       {task.priority}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {teamMembers.length > 0 && onAssignTask && onUnassignTask ? (
+                      <TaskAssignmentPicker
+                        teamMembers={teamMembers}
+                        assignedMemberIds={taskAssignments[task.id] || []}
+                        onAssign={(memberId) => onAssignTask(task.id, memberId)}
+                        onUnassign={(memberId) => onUnassignTask(task.id, memberId)}
+                      />
+                    ) : (
+                      <span className="text-xs text-[var(--lc-muted)]">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Select
