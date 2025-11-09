@@ -14,18 +14,14 @@ interface LifecycleOverviewCardProps {
 
 export function LifecycleOverviewCard({ phases, progress }: LifecycleOverviewCardProps) {
   return (
-    <Card className="p-6 bg-white/80 backdrop-blur-sm border border-neutral-200/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl group relative overflow-hidden">
-      {/* Gradient accent on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-      
-      <div className="relative z-10">
+    <Card className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center shadow-sm">
             <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
-          <h2 className="text-neutral-900 font-semibold">Lifecycle Overview</h2>
+          <h2 className="text-[var(--lc-text)] font-semibold">Lifecycle Overview</h2>
         </div>
       
       <div className="space-y-6">
@@ -41,20 +37,20 @@ export function LifecycleOverviewCard({ phases, progress }: LifecycleOverviewCar
           ))}
         </div>
         
-        <div className="space-y-3 pt-4 border-t border-neutral-100">
+        <div className="space-y-3 pt-4 border-t border-[var(--lc-border)]">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-neutral-700 font-medium">
+            <span className="text-sm text-[var(--lc-muted)] font-medium">
               Overall progress
             </span>
-            <span className="text-sm font-semibold text-neutral-900">
+            <span className="text-sm font-semibold text-[var(--lc-text)]">
               {progress.percent}% · {progress.doneTasks} / {progress.totalTasks} tasks completed
             </span>
           </div>
           <div className="relative group/progress">
-            <Progress value={progress.percent} className="h-2.5 bg-neutral-100" />
+            <Progress value={progress.percent} className="h-2.5 bg-[var(--lc-surface-soft)]" />
             <div className="absolute inset-0 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 transition-all duration-700 ease-out shadow-lg relative"
+                className="h-full bg-[var(--lc-accent)] transition-all duration-700 ease-out shadow-lg relative"
                 style={{ width: `${progress.percent}%` }}
               >
                 {/* Shine effect */}
@@ -71,7 +67,8 @@ export function LifecycleOverviewCard({ phases, progress }: LifecycleOverviewCar
           </div>
         </div>
       </div>
-      </div>
     </Card>
   );
 }
+
+export default LifecycleOverviewCard;

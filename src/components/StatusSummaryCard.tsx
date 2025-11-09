@@ -73,37 +73,33 @@ ${reportData.launchChecklist.map(item => {
         </div>
       );
     }
-    return <div className="w-4 h-4 border-2 border-neutral-300 rounded-sm"></div>;
+      return <div className="w-4 h-4 border-2 border-[var(--lc-border)] rounded-sm"></div>;
   };
 
   return (
-    <Card className="p-6 bg-white/80 backdrop-blur-sm border border-neutral-200/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl group relative overflow-hidden">
-      {/* Gradient accent on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-      
-      <div className="relative z-10">
+    <Card className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center shadow-sm">
             <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <h2 className="text-neutral-900 font-semibold">AI Status & Launch Summary</h2>
+          <h2 className="text-[var(--lc-text)] font-semibold">AI Status & Launch Summary</h2>
         </div>
       
       {!reportData ? (
         <div className="space-y-5">
-          <div className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200/60 group/hint hover:border-blue-300 transition-all">
+          <div className="p-5 bg-[var(--lc-surface-soft)] rounded-xl border border-[var(--lc-border)] group/hint hover:border-[var(--lc-accent)] transition-colors duration-150">
             <div className="flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 group-hover/hint:animate-pulse" />
-              <p className="text-sm text-neutral-700 leading-relaxed">
+              <Sparkles className="w-5 h-5 text-blue-400 mt-0.5 group-hover/hint:animate-pulse" />
+              <p className="text-sm text-[var(--lc-muted)] leading-relaxed">
                 Generate an AI-powered executive summary with status update, next steps, and launch readiness checklist. Perfect for stakeholder communication.
               </p>
             </div>
           </div>
           
           {statusError && (
-            <Alert variant="destructive" className="border-red-200 bg-red-50">
+            <Alert variant="destructive" className="border-red-800 bg-red-900/20">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-sm">{statusError}</AlertDescription>
             </Alert>
@@ -112,14 +108,14 @@ ${reportData.launchChecklist.map(item => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {hasLifecycleData && <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>}
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-[var(--lc-muted)]">
                 {hasLifecycleData ? 'Ready to generate' : 'Generate a lifecycle plan first'}
               </p>
             </div>
             <Button
               onClick={onGenerateStatus}
               disabled={!hasLifecycleData || isGeneratingStatus}
-              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all duration-300 px-6 group/btn"
+              variant="primary"
             >
               {isGeneratingStatus ? (
                 <>
@@ -137,39 +133,39 @@ ${reportData.launchChecklist.map(item => {
         </div>
       ) : (
         <div className="space-y-6 animate-fade-in">
-          <div className="p-5 bg-gradient-to-br from-neutral-50 to-blue-50/30 rounded-xl border border-neutral-200/60 hover:border-blue-200 transition-all group/section">
-            <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
+          <div className="p-5 bg-[var(--lc-surface-soft)] rounded-xl border border-[var(--lc-border)] hover:border-[var(--lc-accent)] transition-colors duration-150 group/section">
+            <h3 className="text-sm font-semibold text-[var(--lc-text)] mb-3 flex items-center gap-2">
               <span className="w-1 h-1 rounded-full bg-blue-500"></span>
               Status Summary
             </h3>
-            <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line">
+            <p className="text-sm text-[var(--lc-muted)] leading-relaxed whitespace-pre-line">
               {reportData.statusSummary}
             </p>
           </div>
           
-          <Separator className="bg-neutral-200/60" />
+          <Separator className="bg-[var(--lc-border)]" />
           
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900 mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[var(--lc-text)] mb-4 flex items-center gap-2">
               <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
               Next Steps
             </h3>
             <ul className="space-y-3">
               {reportData.nextSteps.map((step, index) => (
-                <li key={index} className="flex items-start gap-3 text-neutral-700 p-2.5 rounded-lg hover:bg-emerald-50/50 transition-all duration-200 group/item">
-                  <span className="text-emerald-500 mt-1 text-sm group-hover/item:scale-125 transition-transform">
+                <li key={index} className="flex items-start gap-3 text-[var(--lc-muted)] p-2.5 rounded-lg hover:bg-[var(--lc-surface)] transition-colors duration-150 group/item">
+                  <span className="text-emerald-400 mt-1 text-sm group-hover/item:scale-125 transition-transform">
                     →
                   </span>
-                  <span className="text-sm leading-relaxed group-hover/item:text-neutral-900 transition-colors">{step}</span>
+                  <span className="text-sm leading-relaxed group-hover/item:text-[var(--lc-text)] transition-colors duration-150">{step}</span>
                 </li>
               ))}
             </ul>
           </div>
           
-          <Separator className="bg-neutral-200/60" />
+          <Separator className="bg-[var(--lc-border)]" />
           
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900 mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[var(--lc-text)] mb-4 flex items-center gap-2">
               <span className="w-1 h-1 rounded-full bg-purple-500"></span>
               Launch Checklist
             </h3>
@@ -177,8 +173,8 @@ ${reportData.launchChecklist.map(item => {
               {reportData.launchChecklist.map((item, index) => (
                 <li
                   key={index}
-                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group/item hover:bg-purple-50/30 ${
-                    item.status === 'pending' ? 'text-neutral-400' : 'text-neutral-700'
+                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-150 group/item hover:bg-[var(--lc-surface)] ${
+                    item.status === 'pending' ? 'text-[var(--lc-muted)]' : 'text-[var(--lc-muted)]'
                   }`}
                 >
                   <div className="group-hover/item:scale-110 transition-transform">
@@ -190,8 +186,8 @@ ${reportData.launchChecklist.map(item => {
             </ul>
           </div>
           
-          <div className="flex items-center justify-between pt-5 border-t border-neutral-200/60">
-            <div className="flex items-center gap-2 text-xs text-neutral-500">
+          <div className="flex items-center justify-between pt-5 border-t border-[var(--lc-border)]">
+            <div className="flex items-center gap-2 text-xs text-[var(--lc-muted)]">
               <div className="relative">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                 <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></div>
@@ -202,13 +198,12 @@ ${reportData.launchChecklist.map(item => {
               <Button
                 variant="outline"
                 onClick={handleCopy}
-                className="border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:scale-105 transition-all group/copy"
               >
                 <Copy className="w-4 h-4 mr-2 group-hover/copy:scale-110 transition-transform" />
                 Copy status
               </Button>
               <Button
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 group/send"
+                variant="primary"
                 onClick={handleSendToSlackClick}
                 disabled={isSendingSlack}
               >
@@ -228,7 +223,6 @@ ${reportData.launchChecklist.map(item => {
           </div>
         </div>
       )}
-      </div>
     </Card>
   );
 }

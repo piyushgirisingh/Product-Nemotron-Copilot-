@@ -26,24 +26,24 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'P0':
-        return 'bg-red-50 text-red-700 border-red-200 font-medium';
+        return 'bg-red-900/30 text-red-300 border-red-700 font-medium';
       case 'P1':
-        return 'bg-orange-50 text-orange-700 border-orange-200 font-medium';
+        return 'bg-orange-900/30 text-orange-300 border-orange-700 font-medium';
       case 'P2':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200 font-medium';
+        return 'bg-yellow-900/30 text-yellow-300 border-yellow-700 font-medium';
       default:
-        return 'bg-neutral-100 text-neutral-700 border-neutral-200';
+        return 'bg-slate-800 text-slate-300 border-slate-700';
     }
   };
 
   const getStatusColor = (status: Task['status']) => {
     switch (status) {
       case 'Done':
-        return 'text-green-700';
+        return 'text-green-400';
       case 'In progress':
-        return 'text-blue-700';
+        return 'text-blue-400';
       default:
-        return 'text-neutral-500';
+        return 'text-slate-400';
     }
   };
 
@@ -51,11 +51,7 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
   const phases = Array.from(new Set(tasks.map(t => t.phase)));
   
   return (
-    <Card className="p-6 bg-white/80 backdrop-blur-sm border border-neutral-200/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl group relative overflow-hidden">
-      {/* Gradient accent on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-      
-      <div className="relative z-10">
+    <Card className="space-y-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-sm">
@@ -63,32 +59,32 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
             </div>
-            <h2 className="text-neutral-900 font-semibold">Execution Plan</h2>
+            <h2 className="text-[var(--lc-text)] font-semibold">Execution Plan</h2>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-red-600 transition-colors">
+            <div className="flex items-center gap-1.5 text-xs text-[var(--lc-muted)] hover:text-red-400 transition-colors duration-150">
               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
               <span>Critical</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-orange-600 transition-colors">
+            <div className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-orange-400 transition-colors">
               <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
               <span>Important</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-yellow-600 transition-colors">
+            <div className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-yellow-400 transition-colors">
               <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
               <span>Nice to have</span>
             </div>
           </div>
         </div>
       
-      <div className="border border-neutral-200/60 rounded-lg overflow-hidden bg-white/50">
+      <div className="border border-[var(--lc-border)] rounded-lg overflow-hidden bg-[var(--lc-surface-soft)]/50">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gradient-to-r from-neutral-50 to-neutral-100/50 hover:from-neutral-100 hover:to-neutral-50 border-b border-neutral-200 transition-all">
-              <TableHead className="w-32 text-xs font-semibold text-neutral-700">Phase</TableHead>
-              <TableHead className="text-xs font-semibold text-neutral-700">Task</TableHead>
-              <TableHead className="w-24 text-xs font-semibold text-neutral-700">Priority</TableHead>
-              <TableHead className="w-40 text-xs font-semibold text-neutral-700">Status</TableHead>
+            <TableRow className="bg-[var(--lc-surface-soft)] border-b border-[var(--lc-border)]">
+              <TableHead className="w-32 text-xs font-semibold text-[var(--lc-muted)]">Phase</TableHead>
+              <TableHead className="text-xs font-semibold text-[var(--lc-muted)]">Task</TableHead>
+              <TableHead className="w-24 text-xs font-semibold text-[var(--lc-muted)]">Priority</TableHead>
+              <TableHead className="w-40 text-xs font-semibold text-[var(--lc-muted)]">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -97,9 +93,9 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
               return phaseTasks.map((task, index) => (
                 <TableRow 
                   key={task.id} 
-                  className="border-b border-neutral-100 last:border-0 hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-indigo-50/30 transition-all duration-200 group/row"
+                  className="border-b border-[var(--lc-border)] last:border-0 hover:bg-[var(--lc-surface)]/60 transition-colors duration-150 group/row"
                 >
-                  <TableCell className="text-xs text-neutral-500 font-semibold">
+                  <TableCell className="text-xs text-[var(--lc-muted)] font-semibold">
                     {index === 0 && (
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-blue-500"></div>
@@ -107,7 +103,7 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-neutral-900 group-hover/row:text-neutral-950 transition-colors">
+                  <TableCell className="text-sm text-[var(--lc-text)] group-hover/row:text-[var(--lc-text)] transition-colors duration-150">
                     {task.task}
                   </TableCell>
                   <TableCell>
@@ -123,7 +119,7 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
                       value={task.status}
                       onValueChange={(value) => onUpdateTaskStatus(task.id, value as Task['status'])}
                     >
-                      <SelectTrigger className={`h-8 text-xs border-neutral-200 hover:border-neutral-300 transition-all ${getStatusColor(task.status)}`}>
+                      <SelectTrigger className={`h-8 text-xs border-[var(--lc-border)] bg-[var(--lc-surface-soft)] hover:border-[var(--lc-accent)] transition-colors duration-150 ${getStatusColor(task.status)}`}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -139,7 +135,8 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
           </TableBody>
         </Table>
       </div>
-      </div>
     </Card>
   );
 }
+
+export default ExecutionPlanCard;

@@ -16,18 +16,18 @@ export function PhaseStep({ name, description, status, isLast }: PhaseStepProps)
       case 'active':
         return 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-500/50 animate-pulse';
       case 'upcoming':
-        return 'bg-neutral-100 border-neutral-300';
+        return 'bg-slate-800 border-slate-700';
     }
   };
 
   const getTextColor = () => {
     switch (status) {
       case 'completed':
-        return 'text-green-700';
+        return 'text-green-400';
       case 'active':
-        return 'text-blue-700 font-semibold';
+        return 'text-blue-400 font-semibold';
       case 'upcoming':
-        return 'text-neutral-500';
+        return 'text-neutral-400';
     }
   };
 
@@ -40,26 +40,26 @@ export function PhaseStep({ name, description, status, isLast }: PhaseStepProps)
           {status === 'completed' ? (
             <Check className="w-5 h-5 text-white animate-in zoom-in duration-300" />
           ) : status === 'active' ? (
-            <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-slate-100 animate-pulse"></div>
           ) : (
-            <div className="w-2 h-2 rounded-full bg-neutral-400 group-hover/phase:bg-neutral-500 transition-colors"></div>
+            <div className="w-2 h-2 rounded-full bg-slate-500 group-hover/phase:bg-slate-400 transition-colors"></div>
           )}
         </div>
         {!isLast && (
-          <div className={`w-0.5 h-8 mt-1 transition-all duration-500 ${status === 'completed' ? 'bg-gradient-to-b from-green-500 to-green-300' : 'bg-neutral-200'}`}></div>
+          <div className={`w-0.5 h-8 mt-1 transition-all duration-500 ${status === 'completed' ? 'bg-gradient-to-b from-green-500 to-green-300' : 'bg-slate-700'}`}></div>
         )}
       </div>
       <div className="flex-1 pt-0.5">
         <div className={`text-sm font-medium mb-1 transition-colors ${getTextColor()}`}>
           {name}
         </div>
-        <div className="text-xs text-neutral-500 leading-relaxed">
+        <div className="text-xs text-slate-400 leading-relaxed">
           {description}
         </div>
         {status === 'active' && (
           <div className="mt-2 flex items-center gap-1.5">
             <div className="w-1 h-1 rounded-full bg-blue-500 animate-pulse"></div>
-            <span className="text-xs text-blue-600 font-medium">In Progress</span>
+            <span className="text-xs text-blue-400 font-medium">In Progress</span>
           </div>
         )}
       </div>

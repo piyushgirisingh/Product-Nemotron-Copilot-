@@ -408,11 +408,11 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--lc-bg);
+    color: var(--lc-text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", -system-ui, sans-serif;
   }
 
   /* Custom animations */
@@ -475,12 +475,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #d1d5db;
+    background: #475569;
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
+    background: #64748b;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) h1 {
@@ -2282,10 +2282,19 @@
 
 :root {
   --font-size: 16px;
-  --background: #fff;
-  --foreground: oklch(.145 0 0);
-  --card: #fff;
-  --card-foreground: oklch(.145 0 0);
+  --background: #020817;
+  --foreground: #e5e7eb;
+  --card: #020817;
+  --card-foreground: #e5e7eb;
+  /* Linear-inspired color tokens */
+  --lc-bg: #020817;
+  --lc-surface: #050816;
+  --lc-surface-soft: #0B1020;
+  --lc-border: #111827;
+  --lc-text: #E5E7EB;
+  --lc-muted: #6B7280;
+  --lc-accent: #6366F1;
+  --lc-accent-soft: #4F46E5;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(.145 0 0);
   --primary: #030213;
