@@ -8,7 +8,6 @@ import {
   deleteDoc,
   query,
   where,
-  orderBy,
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -96,8 +95,9 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
     const projectsRef = collection(db, 'projects');
     const q = query(
       projectsRef,
-      where('userId', '==', userId),
-      orderBy('updatedAt', 'desc')
+      where('userId', '==', userId)
+      // Note: orderBy removed to avoid needing a composite index
+      // Projects are sorted in memory instead
     );
     const querySnapshot = await getDocs(q);
 
@@ -112,9 +112,13 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
       } as Project);
     });
 
+    // Sort by updatedAt in memory
+    projects.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+
     return projects;
   } catch (error: any) {
     console.error('Error getting user projects:', error);
+    console.error('Full error details:', error);
     throw new Error(error.message || 'Failed to get user projects');
   }
 };
