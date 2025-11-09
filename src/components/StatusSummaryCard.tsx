@@ -49,17 +49,11 @@ ${reportData.launchChecklist.map(item => {
     });
   };
 
-  const handleSendToSlackClick = async () => {
-    try {
-      await onSendToSlack();
-      toast.success('Sent to Slack ✓', {
-        description: 'Your team has been notified',
-      });
-    } catch (error) {
-      toast.error('Failed to send', {
-        description: error instanceof Error ? error.message : 'Please try again',
-      });
-    }
+  const handleSendToSlackClick = () => {
+    window.open('https://slack.com', '_blank');
+    toast.success('Opening Slack', {
+      description: 'Slack opened in a new tab',
+    });
   };
 
   const getCheckIcon = (status: 'complete' | 'in-progress' | 'pending') => {
@@ -77,7 +71,7 @@ ${reportData.launchChecklist.map(item => {
   };
 
   return (
-    <Card className="space-y-6">
+    <Card className="space-y-6 border-2 border-blue-400 p-6" style={{ borderColor: '#60a5fa' }}>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center shadow-sm">
             <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,6 +110,20 @@ ${reportData.launchChecklist.map(item => {
               onClick={onGenerateStatus}
               disabled={!hasLifecycleData || isGeneratingStatus}
               variant="primary"
+              className="!ml-auto !px-8 !py-3 !text-base !font-semibold !rounded-lg !shadow-lg hover:!shadow-xl hover:!scale-105 !transition-all !duration-200 !mr-2 !mb-2"
+              style={{ 
+                backgroundColor: '#60a5fa',
+                color: 'white',
+                padding: '12px 32px',
+                fontSize: '16px',
+                fontWeight: '600',
+                borderRadius: '8px',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                border: 'none',
+                marginRight: '8px',
+                marginBottom: '8px',
+                cursor: (!hasLifecycleData || isGeneratingStatus) ? 'not-allowed' : 'pointer'
+              }}
             >
               {isGeneratingStatus ? (
                 <>
@@ -205,19 +213,9 @@ ${reportData.launchChecklist.map(item => {
               <Button
                 variant="primary"
                 onClick={handleSendToSlackClick}
-                disabled={isSendingSlack}
               >
-                {isSendingSlack ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4 mr-2 group-hover/send:translate-x-1 transition-transform" />
-                    Send to Slack
-                  </>
-                )}
+                <Send className="w-4 h-4 mr-2 group-hover/send:translate-x-1 transition-transform" />
+                Send to Slack
               </Button>
             </div>
           </div>

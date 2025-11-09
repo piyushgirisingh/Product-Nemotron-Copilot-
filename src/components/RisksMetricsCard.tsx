@@ -8,7 +8,7 @@ interface RisksMetricsCardProps {
 
 export function RisksMetricsCard({ risks, kpis }: RisksMetricsCardProps) {
   return (
-    <Card className="space-y-6">
+    <Card className="space-y-6 border-2 border-blue-400 p-6" style={{ borderColor: '#60a5fa' }}>
         <div className="grid md:grid-cols-2 gap-8">
           {/* Key Risks Section */}
           <div className="group/section">

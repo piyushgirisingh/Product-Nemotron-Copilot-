@@ -51,40 +51,24 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
   const phases = Array.from(new Set(tasks.map(t => t.phase)));
   
   return (
-    <Card className="space-y-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-sm">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-            </div>
-            <h2 className="text-[var(--lc-text)] font-semibold">Execution Plan</h2>
+    <Card className="space-y-6 border-2 border-blue-400" style={{ borderColor: '#60a5fa' }}>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-sm">
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-[var(--lc-muted)] hover:text-red-400 transition-colors duration-150">
-              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-              <span>Critical</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-orange-400 transition-colors">
-              <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-              <span>Important</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-yellow-400 transition-colors">
-              <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-              <span>Nice to have</span>
-            </div>
-          </div>
+          <h2 className="text-[var(--lc-text)] font-semibold text-xl">Execution Plan</h2>
         </div>
       
       <div className="border border-[var(--lc-border)] rounded-lg overflow-hidden bg-[var(--lc-surface-soft)]/50">
         <Table>
           <TableHeader>
             <TableRow className="bg-[var(--lc-surface-soft)] border-b border-[var(--lc-border)]">
-              <TableHead className="w-32 text-xs font-semibold text-[var(--lc-muted)]">Phase</TableHead>
-              <TableHead className="text-xs font-semibold text-[var(--lc-muted)]">Task</TableHead>
-              <TableHead className="w-24 text-xs font-semibold text-[var(--lc-muted)]">Priority</TableHead>
-              <TableHead className="w-40 text-xs font-semibold text-[var(--lc-muted)]">Status</TableHead>
+              <TableHead className="w-32 text-sm font-semibold text-[var(--lc-muted)]">Phase</TableHead>
+              <TableHead className="text-sm font-semibold text-[var(--lc-muted)]">Task</TableHead>
+              <TableHead className="w-24 text-sm font-semibold text-[var(--lc-muted)]">Priority</TableHead>
+              <TableHead className="w-40 text-sm font-semibold text-[var(--lc-muted)]">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -95,13 +79,8 @@ export function ExecutionPlanCard({ tasks, onUpdateTaskStatus }: ExecutionPlanCa
                   key={task.id} 
                   className="border-b border-[var(--lc-border)] last:border-0 hover:bg-[var(--lc-surface)]/60 transition-colors duration-150 group/row"
                 >
-                  <TableCell className="text-xs text-[var(--lc-muted)] font-semibold">
-                    {index === 0 && (
-                      <div className="flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full bg-blue-500"></div>
-                        {phase}
-                      </div>
-                    )}
+                  <TableCell className="text-sm text-[var(--lc-muted)] font-semibold">
+                    {index === 0 ? phase : ''}
                   </TableCell>
                   <TableCell className="text-sm text-[var(--lc-text)] group-hover/row:text-[var(--lc-text)] transition-colors duration-150">
                     {task.task}

@@ -54,7 +54,7 @@ export default function App() {
     name: '',
     description: '',
     targetUsers: '',
-    timeline: '6',
+    timeline: '6 months',
   });
 
   const handleLogin = (email: string, password: string) => {
@@ -148,13 +148,17 @@ export default function App() {
   const handleUpdateTaskStatus = (taskId: string, newStatus: Task['status']) => {
     if (!lifecycleData) return;
 
-    const updatedTasks = lifecycleData.tasks.map(task =>
-      task.id === taskId ? { ...task, status: newStatus } : task
-    );
+    setLifecycleData(prevData => {
+      if (!prevData) return prevData;
+      
+      const updatedTasks = prevData.tasks.map(task =>
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
 
-    setLifecycleData({
-      ...lifecycleData,
-      tasks: updatedTasks,
+      return {
+        ...prevData,
+        tasks: updatedTasks,
+      };
     });
   };
 
@@ -198,38 +202,30 @@ export default function App() {
               
               {lifecycleData && (
                 <div className="space-y-6 animate-fade-in">
-                  <ExpandableSection title="Lifecycle Overview" defaultOpen={true}>
-                    <LifecycleOverviewCard
-                      phases={lifecycleData.phases}
-                      progress={progress}
-                    />
-                  </ExpandableSection>
+                  <LifecycleOverviewCard
+                    phases={lifecycleData.phases}
+                    progress={progress}
+                  />
                   
-                  <ExpandableSection title="Execution Plan" defaultOpen={false}>
-                    <ExecutionPlanCard
-                      tasks={lifecycleData.tasks}
-                      onUpdateTaskStatus={handleUpdateTaskStatus}
-                    />
-                  </ExpandableSection>
+                  <ExecutionPlanCard
+                    tasks={lifecycleData.tasks}
+                    onUpdateTaskStatus={handleUpdateTaskStatus}
+                  />
                   
-                  <ExpandableSection title="Risks & Metrics" defaultOpen={false}>
-                    <RisksMetricsCard
-                      risks={lifecycleData.risks}
-                      kpis={lifecycleData.kpis}
-                    />
-                  </ExpandableSection>
+                  <RisksMetricsCard
+                    risks={lifecycleData.risks}
+                    kpis={lifecycleData.kpis}
+                  />
                   
-                  <ExpandableSection title="AI Status & Launch Summary" defaultOpen={false}>
-                    <StatusSummaryCard
-                      reportData={reportData}
-                      onGenerateStatus={handleGenerateStatus}
-                      onSendToSlack={handleSendToSlack}
-                      isGeneratingStatus={isGeneratingStatus}
-                      isSendingSlack={isSendingSlack}
-                      statusError={statusError}
-                      hasLifecycleData={!!lifecycleData}
-                    />
-                  </ExpandableSection>
+                  <StatusSummaryCard
+                    reportData={reportData}
+                    onGenerateStatus={handleGenerateStatus}
+                    onSendToSlack={handleSendToSlack}
+                    isGeneratingStatus={isGeneratingStatus}
+                    isSendingSlack={isSendingSlack}
+                    statusError={statusError}
+                    hasLifecycleData={!!lifecycleData}
+                  />
                 </div>
               )}
             </div>
