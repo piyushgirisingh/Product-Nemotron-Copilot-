@@ -5,7 +5,7 @@ backend/node_modules/
 .pnp.js
 
 # Production build
-/build
+
 
 # Development
 .DS_Store
