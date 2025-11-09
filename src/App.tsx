@@ -112,14 +112,20 @@ export default function App() {
             risks: latestProject.risks,
             kpis: latestProject.kpis,
           });
-          setTeamMembers(latestProject.teamMembers);
-          setTaskAssignments(latestProject.taskAssignments);
+          setTeamMembers(latestProject.teamMembers || []);
+          setTaskAssignments(latestProject.taskAssignments || {});
           setReportData(latestProject.reportData);
-          toast.success('Project loaded');
+          toast.success('Project loaded successfully!');
+        } else {
+          // New user - no projects yet, that's okay
+          console.log('No existing projects. Ready to create new project.');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error loading project:', error);
-        toast.error('Failed to load project');
+        // Only show error if it's not a permission issue for new users
+        if (!error.message?.includes('permission-denied')) {
+          toast.error('Error loading data. Please try refreshing.');
+        }
       }
     };
 
@@ -134,10 +140,10 @@ export default function App() {
       if (currentProjectId) {
         // Update existing project
         await updateProject(currentProjectId, {
-          name: productInput.name,
-          description: productInput.description,
-          targetUsers: productInput.targetUsers,
-          timeline: productInput.timeline,
+          name: productInput.name || 'Untitled Project',
+          description: productInput.description || '',
+          targetUsers: productInput.targetUsers || '',
+          timeline: productInput.timeline || '6 months',
           phases: lifecycleData.phases,
           tasks: lifecycleData.tasks,
           risks: lifecycleData.risks,
@@ -146,13 +152,14 @@ export default function App() {
           taskAssignments,
           reportData,
         });
+        console.log('Project updated successfully');
       } else {
         // Create new project
         const projectId = await createProject(user.uid, {
-          name: productInput.name,
-          description: productInput.description,
-          targetUsers: productInput.targetUsers,
-          timeline: productInput.timeline,
+          name: productInput.name || 'Untitled Project',
+          description: productInput.description || '',
+          targetUsers: productInput.targetUsers || '',
+          timeline: productInput.timeline || '6 months',
           phases: lifecycleData.phases,
           tasks: lifecycleData.tasks,
           risks: lifecycleData.risks,
@@ -162,11 +169,12 @@ export default function App() {
           reportData,
         });
         setCurrentProjectId(projectId);
-        toast.success('Project saved');
+        toast.success('Project saved successfully!');
+        console.log('New project created:', projectId);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving project:', error);
-      toast.error('Failed to save project');
+      toast.error('Failed to save: ' + (error.message || 'Unknown error'));
     }
   };
 

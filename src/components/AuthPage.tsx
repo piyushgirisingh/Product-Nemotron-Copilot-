@@ -72,17 +72,17 @@ export function AuthPage({ onAuthSuccess }: AuthPageProps) {
       </div>
 
       {/* Title */}
-      <h1 className="text-6xl font-bold text-white mb-6 relative z-10">
+      <h1 className="text-[10rem] font-black text-white mb-8 relative z-10 tracking-wider leading-none" style={{ textShadow: '0 0 40px rgba(34, 211, 238, 0.5)' }}>
         Nemora
       </h1>
-      <p className="text-xl text-white mb-12 relative z-10">
+      <p className="text-3xl text-white mb-12 relative z-10 font-semibold">
         Welcome to Nemora, your new nemotron powered product management tool!
       </p>
 
       {/* Login Card */}
       <div className="w-full max-w-3xl relative z-10">
         <div className="border-2 border-cyan-400 rounded-lg p-8 bg-[#0a1628]/50 backdrop-blur-sm shadow-[0_0_30px_rgba(34,211,238,0.3)]">
-          <h2 className="text-2xl font-semibold text-white mb-8">
+          <h2 className="text-4xl font-black text-white mb-8">
             {isLogin ? 'Login' : 'Sign Up'}
           </h2>
 
