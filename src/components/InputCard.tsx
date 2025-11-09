@@ -1,3 +1,4 @@
+import React from 'react';
 import { Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
@@ -33,14 +34,9 @@ export function InputCard({
   const maxDescriptionLength = 500;
 
   return (
-    <Card className="space-y-5">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-sm">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <h2 className="text-[var(--lc-text)] font-semibold">Describe your product</h2>
-        </div>
+    <Card className="space-y-5 border-2 border-blue-400 max-w-2xl mx-auto pt-8" style={{ borderColor: '#60a5fa' }}>
+      <div className="flex items-center justify-center mb-6 mt-4">
+        <h2 className="text-[var(--lc-text)] font-semibold">Describe your product</h2>
       </div>
     
       <div className="space-y-5">
@@ -54,7 +50,13 @@ export function InputCard({
             onChange={(e) => setProductInput({ ...productInput, name: e.target.value })}
             placeholder="e.g., Smart Health Tracker"
             disabled={isGenerating}
-            className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)]"
+            className="!bg-blue-400/10 !border-2 !border-blue-400 w-full rounded-md px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:!border-blue-500 focus:!bg-blue-400/15 disabled:!bg-blue-400/10 disabled:!opacity-100"
+            style={{ 
+              backgroundColor: isGenerating ? 'rgba(96, 165, 250, 0.1)' : 'rgba(96, 165, 250, 0.1)', 
+              borderColor: '#60a5fa', 
+              borderWidth: '2px',
+              opacity: isGenerating ? 1 : 1
+            }}
           />
         </div>
         
@@ -82,7 +84,8 @@ export function InputCard({
             placeholder="Describe what your product does, its key features, and value proposition..."
             rows={3}
             disabled={isGenerating}
-            className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)] resize-none"
+            className="!bg-blue-400/10 !border-2 !border-blue-400 w-full rounded-md px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:!border-blue-500 focus:!bg-blue-400/15 resize-none"
+            style={{ backgroundColor: 'rgba(96, 165, 250, 0.1)', borderColor: '#60a5fa', borderWidth: '2px' }}
           />
         </div>
         
@@ -97,7 +100,8 @@ export function InputCard({
               onChange={(e) => setProductInput({ ...productInput, targetUsers: e.target.value })}
               placeholder="e.g., Healthcare professionals"
               disabled={isGenerating}
-              className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)]"
+              className="!bg-blue-400/10 !border-2 !border-blue-400 w-full rounded-md px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:!border-blue-500 focus:!bg-blue-400/15"
+              style={{ backgroundColor: 'rgba(96, 165, 250, 0.1)', borderColor: '#60a5fa', borderWidth: '2px' }}
             />
           </div>
           
@@ -105,20 +109,42 @@ export function InputCard({
             <Label htmlFor="timeline" className="text-sm text-[var(--lc-muted)]">
               Timeline
             </Label>
-            <Select
-              value={productInput.timeline}
-              onValueChange={(value) => setProductInput({ ...productInput, timeline: value })}
-              disabled={isGenerating}
-            >
-              <SelectTrigger id="timeline" className="w-full rounded-md bg-[var(--lc-surface-soft)] border border-[var(--lc-border)] px-3 py-2 text-sm text-[var(--lc-text)] focus:outline-none focus:ring-2 focus:ring-[var(--lc-accent)] focus:border-[var(--lc-accent)]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="3">3 months</SelectItem>
-                <SelectItem value="6">6 months</SelectItem>
-                <SelectItem value="12">12 months</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Input
+                id="timeline-value"
+                type="number"
+                min="1"
+                value={productInput.timeline.split(' ')[0]}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || (parseInt(value) > 0)) {
+                    const unit = productInput.timeline.split(' ')[1] || 'months';
+                    setProductInput({ ...productInput, timeline: value ? `${value} ${unit}` : `1 ${unit}` });
+                  }
+                }}
+                placeholder="e.g., 6"
+                disabled={isGenerating}
+                className="!bg-blue-400/10 !border-2 !border-blue-400 w-24 rounded-md px-3 py-2 text-sm text-[var(--lc-text)] placeholder:text-[var(--lc-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:!border-blue-500 focus:!bg-blue-400/15"
+                style={{ backgroundColor: 'rgba(96, 165, 250, 0.1)', borderColor: '#60a5fa', borderWidth: '2px' }}
+              />
+              <Select
+                value={productInput.timeline.split(' ')[1] || 'months'}
+                onValueChange={(unit) => {
+                  const value = productInput.timeline.split(' ')[0] || '6';
+                  setProductInput({ ...productInput, timeline: `${value} ${unit}` });
+                }}
+                disabled={isGenerating}
+              >
+                <SelectTrigger id="timeline-unit" className="!bg-blue-400/10 !border-2 !border-blue-400 flex-1 rounded-md px-3 py-2 text-sm text-[var(--lc-text)] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:!border-blue-500 focus:!bg-blue-400/15" style={{ backgroundColor: 'rgba(96, 165, 250, 0.1)', borderColor: '#60a5fa', borderWidth: '2px' }}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="days">days</SelectItem>
+                  <SelectItem value="months">months</SelectItem>
+                  <SelectItem value="years">years</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         
@@ -129,7 +155,7 @@ export function InputCard({
           </Alert>
         )}
         
-        <div className="pt-2 flex items-center justify-between">
+        <div className="pt-4 pb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
             <p className="text-xs text-[var(--lc-muted)]">
@@ -140,6 +166,20 @@ export function InputCard({
             onClick={onGenerate}
             disabled={isGenerating}
             variant="primary"
+            className="!ml-auto !px-8 !py-3 !text-base !font-semibold !rounded-lg !shadow-lg hover:!shadow-xl hover:!scale-105 !transition-all !duration-200 !mr-2 !mb-2"
+            style={{ 
+              backgroundColor: '#60a5fa',
+              color: 'white',
+              padding: '12px 32px',
+              fontSize: '16px',
+              fontWeight: '600',
+              borderRadius: '8px',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+              border: 'none',
+              marginRight: '8px',
+              marginBottom: '8px',
+              cursor: isGenerating ? 'not-allowed' : 'pointer'
+            }}
           >
             {isGenerating ? (
               <>
